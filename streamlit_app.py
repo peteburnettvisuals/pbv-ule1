@@ -44,22 +44,62 @@ if "current_node" not in st.session_state:
 def welcome_screen():
     st.title("Welcome to the Universal Learning Engine")
     st.subheader("Skyhigh Demo Edition")
-    
-    # Hero Video
-    st.video("https://www.youtube.com/watch?v=your_skyhigh_welcome") # Placeholder
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🚀 Start New Training", use_container_width=True):
-            # Logic: Create new record in Firestore, then auth
-            st.session_state.authenticated = True
-            st.rerun()
-    with col2:
-        student_id = st.text_input("Enter Student ID to Resume")
-        if st.button("🔄 Resume Progress", use_container_width=True):
-            # Logic: Fetch thread_id and last_node from Firestore
-            st.session_state.authenticated = True
-            st.rerun()
+
+    col_video, col_auth = st.columns([0.6, 0.4], gap="large")
+
+    with col_video:
+        st.video("https://www.youtube.com/watch?v=your_skyhigh_welcome")
+        st.info("💡 **Tailored Learning:** Your email allows us to save your progress exactly where you left off.")
+
+    with col_auth:
+        tab_login, tab_reg = st.tabs(["🔄 Resume", "🚀 New Training"])
+
+        with tab_login:
+            # Simple email-based resume
+            login_email = st.text_input("Enter your Email to Resume", placeholder="name@company.com")
+            if st.button("Resume Progress", use_container_width=True):
+                if login_email:
+                    # LOGIC: Check Firestore for document ID == login_email
+                    st.session_state.student_email = login_email.lower().strip()
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.warning("Please enter your email address.")
+
+        with tab_reg:
+            reg_name = st.text_input("Full Name")
+            reg_email = st.text_input("Email Address (This will be your Login ID)")
+            
+            # THE CONTEXT FIELD
+            user_context = st.text_area(
+                "Your Profile & Goals", 
+                placeholder="e.g. I am a safety officer looking to understand drone risk protocols..."
+            )
+            
+            if st.button("Start New Training", use_container_width=True):
+                if reg_name and reg_email:
+                    # LOGIC: Save to Firestore using reg_email as the Document ID
+                    st.session_state.student_email = reg_email.lower().strip()
+                    st.session_state.user_context = user_context
+                    st.session_state.authenticated = True
+                    st.success(f"Profile Created for {reg_email}!")
+                    st.rerun()
+                else:
+                    st.error("Name and Email are required.")
+
+# App Entry Point
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    welcome_screen()
+else:
+    # This is where the Instructor-Led Engine takes over
+    st.write(f"### Welcome back, {st.session_state.get('student_email')}!")
+    st.write("Loading your personalized Skyhigh syllabus...")
+
+
+
 
 def coach_interface():
     # SIDEBAR: The Live Syllabus
