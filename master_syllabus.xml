@@ -1,14 +1,79 @@
 <syllabus>
-    <module id="MOD-01" title="Pre-Flight Essentials">
-        <element id="EL-01.1.A">
-            <title>Physical Integrity &amp; Propellers</title>
-            <video_url>https://www.youtube.com/watch?v=dQw4w9WgXcQ</video_url>
-            <description>A deep dive into checking your hardware before the jump.</description>
-        </element>
-        <element id="EL-01.1.B">
-            <title>Battery Management</title>
-            <video_url>https://www.youtube.com/watch?v=another_video</video_url>
-            <description>Ensuring your power levels are optimal for high-altitude flight.</description>
-        </element>
-    </module>
+    <element id="SOP-GEAR-01">
+        <title>Canopy Systems & Ripcords</title>
+        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY</video_url>
+        <technical_details>
+            - Dual-canopy requirement: Main and Reserve.
+            - Main Ripcord: Located right side, chest height.
+            - Reserve Handle: Silver Handle, Located left side, hip height.
+            - Protocol: Reserve usage only permitted after a Main Cut-away.
+        </technical_details>
+    </element>
+
+    <element id="SOP-GEAR-02">
+        <title>Altimeter Mastery & Decision Windows</title>
+        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=53</video_url>
+        <technical_details>
+            - Check Cadence: Every 5 seconds during freefall.
+            - 5,000ft: Start of the Decision Window.
+            - 3,000ft: Absolute Mandatory Deployment Altitude.
+        </technical_details>
+    </element>
+
+    <element id="SOP-ENV-01">
+        <title>Weather & Atmospheric Limits</title>
+        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=88</video_url>
+        <technical_details>
+            - Visibility: No boarding if cloud cover is below 2,000ft.
+            - Thunderstorms: 10-mile radius clearance for Cumulonimbus formations.
+            - Wind Limit: Maximum ground speed 20 knots.
+        </technical_details>
+    </element>
+
+    <element id="SOP-BODY-01">
+        <title>The Stable Arch (The Banana)</title>
+        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&t=12</video_url>
+        <technical_details>
+            - Geometry: Hips pushed forward, head back, symmetrical limbs.
+            - Objective: Prevent "Tumble" malfunctions.
+            - Global Travel Context: Maintaining arch in varied air densities.
+        </technical_details>
+    </element>
+
+    <element id="SOP-NAV-01">
+        <title>Toggle Steering & Landing Flares</title>
+        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&t=43</video_url>
+        <technical_details>
+            - Turning: Left/Right toggles pulled toward the waist.
+            - Flare: Both toggles pulled simultaneously at 10ft AGL.
+        </technical_details>
+    </element>
+
+    <element id="SOP-CRIS-01">
+        <title>Line Twists & Bicycle Kicks</title>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=11</video_url>
+        <technical_details>
+            - Correction: Grab risers and "bicycle kick" legs.
+            - Hard Floor: If not cleared by 2,500ft, initiate Cut-Away.
+        </technical_details>
+    </element>
+
+    <element id="SOP-CRIS-02">
+        <title>The Drown Protocol (Water Landings)</title>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=37</video_url>
+        <technical_details>
+            - Airborne Action: Unclip chest strap.
+            - Water Contact Action: Unclip leg straps only upon touching water.
+            - Reasoning: Prevents harness fall-out while avoiding cocooning.
+        </technical_details>
+    </element>
+
+    <element id="SOP-CRIS-03">
+        <title>Cut-Away Procedure (Total Mal)</title>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=64</video_url>
+        <technical_details>
+            - Sequence: Look (Red Handle), Grab (Red Handle), Pull (Silver/Reserve).
+            - Criticality: For use during total malfunction (Mal) scenarios.
+        </technical_details>
+    </element>
 </syllabus>
