@@ -43,7 +43,7 @@ def get_lesson_content(node_id):
         pass
     return {
         "title": "Welcome to Skyhigh", 
-        "video": "https://www.youtube.com/watch?v=oX3PB6_zrCU",
+        "video_url": "https://www.youtube.com/watch?v=oX3PB6_zrCU",
         "technical_details": "Follow standard safety protocols."
     }
 
