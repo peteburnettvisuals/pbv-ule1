@@ -43,7 +43,7 @@ def get_lesson_content(node_id):
         pass
     return {
         "title": "Welcome to Skyhigh", 
-        "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "video": "https://www.youtube.com/watch?v=oX3PB6_zrCU",
         "technical_details": "Follow standard safety protocols."
     }
 
@@ -60,7 +60,7 @@ def welcome_screen():
     st.title("Universal Learning Engine")
     st.subheader("Skyhigh Demo Edition")
     col_v, col_a = st.columns([0.6, 0.4], gap="large")
-    with col_v: st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ") # Rickroll Placeholder
+    with col_v: st.video("https://www.youtube.com/watch?v=oX3PB6_zrCU") 
     with col_a:
         tab_l, tab_r = st.tabs(["🔄 Resume", "🚀 New Training"])
         with tab_l:
