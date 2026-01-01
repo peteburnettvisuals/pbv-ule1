@@ -1,6 +1,6 @@
 <syllabus>
     <element id="SOP-GEAR-01">
-        <title>Canopy Systems & Ripcords</title>
+        <title>Canopy Systems &amp; Ripcords</title>
         <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY</video_url>
         <technical_details>
             - Dual-canopy requirement: Main and Reserve.
@@ -11,7 +11,7 @@
     </element>
 
     <element id="SOP-GEAR-02">
-        <title>Altimeter Mastery & Decision Windows</title>
+        <title>Altimeter Mastery &amp; Decision Windows</title>
         <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=53</video_url>
         <technical_details>
             - Check Cadence: Every 5 seconds during freefall.
@@ -21,7 +21,7 @@
     </element>
 
     <element id="SOP-ENV-01">
-        <title>Weather & Atmospheric Limits</title>
+        <title>Weather &amp; Atmospheric Limits</title>
         <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=88</video_url>
         <technical_details>
             - Visibility: No boarding if cloud cover is below 2,000ft.
@@ -41,7 +41,7 @@
     </element>
 
     <element id="SOP-NAV-01">
-        <title>Toggle Steering & Landing Flares</title>
+        <title>Toggle Steering &amp; Landing Flares</title>
         <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&t=43</video_url>
         <technical_details>
             - Turning: Left/Right toggles pulled toward the waist.
@@ -50,7 +50,7 @@
     </element>
 
     <element id="SOP-CRIS-01">
-        <title>Line Twists & Bicycle Kicks</title>
+        <title>Line Twists &amp; Bicycle Kicks</title>
         <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=11</video_url>
         <technical_details>
             - Correction: Grab risers and "bicycle kick" legs.
