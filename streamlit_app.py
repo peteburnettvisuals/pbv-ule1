@@ -80,6 +80,7 @@ def welcome_screen():
 
 def coach_interface():
     lesson = get_lesson_content(st.session_state.current_node)
+    sop_number = st.session_state.current_node
     
     # 3-COLUMN LAYOUT START
     with st.sidebar:
@@ -164,7 +165,9 @@ def coach_interface():
             try:
                 st.session_state.chat_session = model.start_chat(history=[])
                 sys_prompt = f"""
-                You are the Skyhigh Flight Instructor. 
+                You are the Skyhigh Parachuting Instructor. 
+                Syllabus Title: {lesson['title']}
+                SOP Number: {sop_number}
                 Syllabus Source of Truth: {lesson['technical_details']}
                 Goal: {st.session_state.user_context}.
 
@@ -174,6 +177,7 @@ def coach_interface():
                 3. Interactive Loop: After each detail, ask if it makes sense or if they have a specific question. 
                 4. Do NOT move to the next detail until the student acknowledges or asks a follow-up.
                 5. Quiz: Only start the quiz after all technical details for this lesson have been discussed.
+                6. MANDATORY: Begin your briefing by clearly stating: "In the section, we are covering SOP {sop_number}: {lesson['title']}."
                 """
                 response = st.session_state.chat_session.send_message(sys_prompt)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
