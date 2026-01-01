@@ -204,22 +204,24 @@ def coach_interface():
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-# --- RENDER LOGIC (Consolidated at the very bottom) ---
+# --- FINAL RENDER LOGIC ---
 
+# 1. If not logged in, show ONLY the welcome screen
 if not st.session_state.authenticated:
-    # Only call this ONCE here
     welcome_screen()
+
+# 2. If logged in, show ONLY the coach interface
 else:
-    # 1. Sync the local state with Firestore once at the start of the session
+    # This block ensures we only fetch data once per session
     if "user_data" not in st.session_state:
-        # Use the captured email from session state instead of hardcoding
         data = get_current_lesson(st.session_state.get('student_email')) 
         if data:
             st.session_state.user_data = data
-            # Sync the XML node from Firestore to your UI state
             st.session_state.current_node = data.get("current_node", "EL-01.1.A")
+            # Crucial: If we are resuming, pull the context from the DB into state
+            st.session_state.user_context = data.get("context", "your goals")
     
-    # 2. Show the Coach Interface
+    # Render the coach interface exactly once
     coach_interface()
 
 
@@ -258,18 +260,18 @@ def coach_interface():
 
 # --- RENDER LOGIC (Consolidated at the very bottom) ---
 
+# --- RENDER LOGIC (At the bottom of your script) ---
 if not st.session_state.authenticated:
-    # Only call this ONCE here
     welcome_screen()
 else:
-    # 1. Sync the local state with Firestore once at the start of the session
+    # This block runs ONLY ONCE when the user first authenticates
     if "user_data" not in st.session_state:
-        # Use the captured email from session state instead of hardcoding
         data = get_current_lesson(st.session_state.get('student_email')) 
         if data:
             st.session_state.user_data = data
-            # Sync the XML node from Firestore to your UI state
+            # SYNC THE STATE:
             st.session_state.current_node = data.get("current_node", "EL-01.1.A")
+            # POPULATE CONTEXT:
+            st.session_state.user_context = data.get("context", "your career goals")
     
-    # 2. Show the Coach Interface
     coach_interface()
