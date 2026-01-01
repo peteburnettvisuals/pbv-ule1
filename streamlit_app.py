@@ -87,19 +87,6 @@ def welcome_screen():
                 else:
                     st.error("Name and Email are required.")
 
-# App Entry Point
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-if not st.session_state.authenticated:
-    welcome_screen()
-else:
-    # This is where the Instructor-Led Engine takes over
-    st.write(f"### Welcome back, {st.session_state.get('student_email')}!")
-    st.write("Loading your personalized Skyhigh syllabus...")
-
-
-
 
 def coach_interface():
     # SIDEBAR: The Live Syllabus
@@ -134,17 +121,20 @@ def coach_interface():
         st.chat_message("user").write(prompt)
         # Here we will add the Gemini 2.0 call later!
 
-# --- RENDER LOGIC ---
+# --- RENDER LOGIC (Consolidated at the very bottom) ---
+
 if not st.session_state.authenticated:
+    # Only call this ONCE here
     welcome_screen()
 else:
-    # IMPORTANT: Sync the local state with Firestore once at the start of the session
+    # 1. Sync the local state with Firestore once at the start of the session
     if "user_data" not in st.session_state:
-        # For the shakedown, we use the email you created manually
-        data = get_current_lesson("petercameronburnett@gmail.com") 
+        # Use the captured email from session state instead of hardcoding
+        data = get_current_lesson(st.session_state.get('student_email')) 
         if data:
             st.session_state.user_data = data
             # Sync the XML node from Firestore to your UI state
-            st.session_state.current_node = data.get("current_node", "EL-GEAR-01-A")
+            st.session_state.current_node = data.get("current_node", "EL-01.1.A")
     
+    # 2. Show the Coach Interface
     coach_interface()
