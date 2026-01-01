@@ -12,7 +12,7 @@
 
     <element id="SOP-GEAR-02">
         <title>Altimeter Mastery &amp; Decision Windows</title>
-        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=53</video_url>
+        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&amp;t=53</video_url>
         <technical_details>
             - Check Cadence: Every 5 seconds during freefall.
             - 5,000ft: Start of the Decision Window.
@@ -22,7 +22,7 @@
 
     <element id="SOP-ENV-01">
         <title>Weather &amp; Atmospheric Limits</title>
-        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&t=88</video_url>
+        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&amp;t=88</video_url>
         <technical_details>
             - Visibility: No boarding if cloud cover is below 2,000ft.
             - Thunderstorms: 10-mile radius clearance for Cumulonimbus formations.
@@ -32,7 +32,7 @@
 
     <element id="SOP-BODY-01">
         <title>The Stable Arch (The Banana)</title>
-        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&t=12</video_url>
+        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&amp;t=12</video_url>
         <technical_details>
             - Geometry: Hips pushed forward, head back, symmetrical limbs.
             - Objective: Prevent "Tumble" malfunctions.
@@ -42,7 +42,7 @@
 
     <element id="SOP-NAV-01">
         <title>Toggle Steering &amp; Landing Flares</title>
-        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&t=43</video_url>
+        <video_url>https://www.youtube.com/watch?v=iQcRGqhIbLo&amp;t=43</video_url>
         <technical_details>
             - Turning: Left/Right toggles pulled toward the waist.
             - Flare: Both toggles pulled simultaneously at 10ft AGL.
@@ -51,7 +51,7 @@
 
     <element id="SOP-CRIS-01">
         <title>Line Twists &amp; Bicycle Kicks</title>
-        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=11</video_url>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&amp;t=11</video_url>
         <technical_details>
             - Correction: Grab risers and "bicycle kick" legs.
             - Hard Floor: If not cleared by 2,500ft, initiate Cut-Away.
@@ -60,7 +60,7 @@
 
     <element id="SOP-CRIS-02">
         <title>The Drown Protocol (Water Landings)</title>
-        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=37</video_url>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&amp;t=37</video_url>
         <technical_details>
             - Airborne Action: Unclip chest strap.
             - Water Contact Action: Unclip leg straps only upon touching water.
@@ -70,7 +70,7 @@
 
     <element id="SOP-CRIS-03">
         <title>Cut-Away Procedure (Total Mal)</title>
-        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&t=64</video_url>
+        <video_url>https://www.youtube.com/watch?v=3qDBFceGupU&amp;t=64</video_url>
         <technical_details>
             - Sequence: Look (Red Handle), Grab (Red Handle), Pull (Silver/Reserve).
             - Criticality: For use during total malfunction (Mal) scenarios.
