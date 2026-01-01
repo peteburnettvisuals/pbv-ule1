@@ -173,6 +173,7 @@ def coach_interface():
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
+        st.write(f"**for ** {st.session_state.current_node}")
         st.progress(15) # Example progress %
         st.write(f"**Current Element:** {st.session_state.current_node}")
         st.divider()
@@ -217,6 +218,7 @@ else:
             st.session_state.user_data = data
             st.session_state.current_node = data.get("current_node", "EL-01.1.A")
             st.session_state.user_context = data.get("context", "your goals")
+            st.session_state.full_name = data.get("name", "User Name")
     
     # 2. RENDER THE COACH (Just once!)
     coach_interface()
