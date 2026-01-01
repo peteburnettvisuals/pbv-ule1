@@ -95,7 +95,7 @@ def welcome_screen():
 def coach_interface():
     # SIDEBAR: The Live Syllabus
     with st.sidebar:
-        st.image("https://your-logo-url.com/skyhigh-logo.png", width=100)
+        st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
         st.progress(15) # Example progress %
         st.write(f"**Current Element:** {st.session_state.current_node}")
