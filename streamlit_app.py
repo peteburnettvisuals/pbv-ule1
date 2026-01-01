@@ -204,12 +204,17 @@ def coach_interface():
         st.info("Instructor-Led Mode: Active")
 
     # MAIN CHAT (Jump Assistant Style)
+        
+    # 1. NEW: Fetch the actual lesson data using the current node ID
+    lesson = get_lesson_content(st.session_state.current_node)
+
     st.header("Guided Training")
     
-    # Placeholder for the "Resource Slot" (Videos/Images for current node)
     with st.container(border=True):
-        st.write("📺 **Resource for this Lesson:** Propeller Inspection Guide")
-        # st.video(...) would go here based on XML
+        # 2. Update the Title and show the Video from XML
+        st.write(f"📺 **Current Lesson:** {lesson['title']}")
+        if lesson['video']:
+            st.video(lesson['video'])
     
    # Chat History Container
     if "messages" not in st.session_state:
