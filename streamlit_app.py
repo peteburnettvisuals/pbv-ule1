@@ -145,7 +145,7 @@ def welcome_screen():
         with tab_reg:
             reg_name = st.text_input("Full Name")
             reg_email = st.text_input("Email Address (This will be your Login ID)")
-            user_context = st.text_area("Your Profile & Goals", placeholder="...")
+            user_context = st.text_area("Your Profile & Goals", placeholder="This information allows the system to firther talior and personalise its instruction to the learner's background and aims.")
             
             if st.button("Start New Training", use_container_width=True):
                 if reg_name and reg_email:
@@ -199,11 +199,10 @@ def coach_interface():
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
-    # User Input (Limited by state - e.g., can't skip ahead)
-    if prompt := st.chat_input("Respond to the coach..."):
+    # Add a unique key to the chat input
+    if prompt := st.chat_input("Respond to the coach...", key="main_chat_input"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        # Here we will add the Gemini 2.0 call later!
 
 # --- RENDER LOGIC (Consolidated at the very bottom) ---
 
