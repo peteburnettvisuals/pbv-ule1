@@ -36,23 +36,29 @@ model = genai.GenerativeModel('gemini-2.0-flash-exp')
 # --- 2. DATA HANDLERS ---
 
 def get_lesson_content(node_id):
-    """Parses the XML for title, video, and technical source of truth."""
     try:
+        # 1. Standardize the incoming ID to prevent mismatches
+        target_id = str(node_id).strip() 
+        
         tree = ET.parse("master_syllabus.xml")
         root = tree.getroot()
+        
         for element in root.findall(".//element"):
-            if element.get("id") == node_id:
+            # 2. Compare standardized IDs
+            if element.get("id").strip() == target_id:
                 return {
                     "title": element.find("title").text,
                     "video_url": element.find("video_url").text,
                     "technical_details": element.find("technical_details").text.strip()
                 }
-    except Exception:
-        pass
+    except Exception as e:
+        st.error(f"XML Error: {e}") # Debugging tool for your demo
+        
+    # FALLBACK: If this appears, the ID match failed
     return {
-        "title": "Welcome to Skyhigh", 
+        "title": "SOP DATA NOT FOUND", 
         "video_url": "https://www.youtube.com/watch?v=oX3PB6_zrCU",
-        "technical_details": "Follow standard safety protocols."
+        "technical_details": "Error: Check XML IDs."
     }
 
 def update_student_node(email, next_node):
