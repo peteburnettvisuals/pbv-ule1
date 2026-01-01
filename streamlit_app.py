@@ -6,9 +6,13 @@ import json
 # --- INITIAL SETUP ---
 st.set_page_config(page_title="ULE | Skyhigh Coach", layout="wide")
 
-# Load CSS
-with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# --- 1. THE STYLE INJECTOR ---
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Call it immediately
+local_css("style.css")
 
 # Initialize Firestore (Make sure your GOOGLE_APPLICATION_CREDENTIALS env var is set)
 creds_info = st.secrets["gcp_service_account"]

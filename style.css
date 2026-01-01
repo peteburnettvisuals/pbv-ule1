@@ -21,3 +21,17 @@
 .stProgress > div > div > div > div {
     background-color: #38bdf8;
 }
+
+/* style.css snippet */
+.stTextArea textarea {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #3d3d3d;
+}
+
+.stButton>button {
+    border-radius: 5px;
+    height: 3em;
+    background-color: #ff4b4b; /* Skyhigh Red? Or your preferred brand color */
+    color: white;
+}
