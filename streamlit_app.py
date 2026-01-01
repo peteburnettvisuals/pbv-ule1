@@ -173,7 +173,7 @@ def coach_interface():
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
-        st.write(f"**for ** {st.session_state.current_node}")
+        st.write(f"**for ** {st.session_state.full_name}")
         st.progress(15) # Example progress %
         st.write(f"**Current Element:** {st.session_state.current_node}")
         st.divider()
