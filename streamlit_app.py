@@ -111,17 +111,17 @@ def welcome_screen():
                     st.rerun()
 
 def coach_interface():
-    # --- Sidebar ---
+    # 1. SIDEBAR (With your Marty McFly personalization)
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
-        st.write(f"Learner: {st.session_state.full_name}")
+        st.write(f"Learner: {st.session_state.full_name}") # The Marty line
         st.progress(15)
         st.write(f"**Current Element:** {st.session_state.current_node}")
         st.divider()
         st.info("Instructor-Led Mode: Active")
 
-    # --- XML Content Lookup ---
+    # 2. XML RESOURCE LOOKUP
     lesson = get_lesson_content(st.session_state.current_node)
     st.header("Guided Training")
     
@@ -130,20 +130,28 @@ def coach_interface():
         if lesson['video']:
             st.video(lesson['video'])
     
-    # --- AI Chat Initialization ---
+    # 3. GEMINI CHAT INITIALIZATION (Using st.cache_resource to prevent rate limit errors)
     if "chat_session" not in st.session_state:
-        # Construct the "Flavor" prompt
-        system_prompt = f"""You are the Skyhigh AI Flight Instructor. 
-        Student: {st.session_state.full_name}. Goal: {st.session_state.user_context}. 
-        Lesson: {lesson['title']}. Introduce the lesson and explain how it helps 
-        them with their specific goal."""
+        # Prompt Injector
+        system_prompt = f"""
+        You are the Skyhigh AI Flight Instructor. 
+        Student: {st.session_state.full_name}. 
+        Goal: {st.session_state.user_context}. 
+        Lesson: {lesson['title']}.
+        Introduce the lesson and explain how it helps them return to 1985 safely.
+        """
         
-        # Start session and get first message
+        # Start the thread
         st.session_state.chat_session = model.start_chat(history=[])
-        response = st.session_state.chat_session.send_message(system_prompt)
-        st.session_state.messages = [{"role": "assistant", "content": response.text}]
+        
+        # Wrapped in try/except to handle the 'ResourceExhausted' gracefully
+        try:
+            response = st.session_state.chat_session.send_message(system_prompt)
+            st.session_state.messages = [{"role": "assistant", "content": response.text}]
+        except Exception:
+            st.session_state.messages = [{"role": "assistant", "content": "I'm just recalibrating my temporal sensors. Give me a moment!"}]
 
-    # --- Display & Input ---
+    # 4. CHAT DISPLAY & INPUT
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
@@ -151,10 +159,13 @@ def coach_interface():
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         
-        # Live AI response
-        response = st.session_state.chat_session.send_message(prompt)
-        st.session_state.messages.append({"role": "assistant", "content": response.text})
-        st.chat_message("assistant").write(response.text)
+        # Get AI Response
+        try:
+            response = st.session_state.chat_session.send_message(prompt)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
+            st.chat_message("assistant").write(response.text)
+        except Exception as e:
+            st.error("Engine overheating! (Rate limit hit). Please wait 60 seconds.")
 
 # --- 5. RENDER LOGIC (The Switchboard) ---
 if not st.session_state.authenticated:
