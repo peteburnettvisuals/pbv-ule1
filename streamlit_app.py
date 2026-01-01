@@ -36,7 +36,7 @@ def get_lesson_content(node_id):
             if element.get("id") == node_id:
                 return {
                     "title": element.find("title").text,
-                    "video": element.find("video_url").text,
+                    "video_url": element.find("video_url").text,
                     "technical_details": element.find("technical_details").text.strip()
                 }
     except Exception:
