@@ -144,7 +144,7 @@ def coach_interface():
         with st.container(border=True):
             # Pulling directly from the 'lesson' dict fetched at top of function
             st.write(f"📺 **Video:** {lesson['title']}")
-            st.video(lesson['video']) 
+            st.video(lesson['video_url']) 
             st.info("💡 Watch the video above while chatting with your coach on the right.")
 
     # COLUMN 2: Independent Scrolling Coach
