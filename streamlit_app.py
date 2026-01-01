@@ -21,6 +21,14 @@ creds_info = st.secrets["gcp_service_account"]
 credentials = service_account.Credentials.from_service_account_info(creds_info)
 db = firestore.Client(database="ule-store1", credentials=credentials)
 
+# NEW: Global Syllabus Sequence
+# Moving this here ensures every column in your cockpit knows the lesson order
+module_sequence = [
+    "SOP-GEAR-01", "SOP-GEAR-02", "SOP-ENV-01", 
+    "SOP-BODY-01", "SOP-NAV-01", "SOP-CRIS-01", 
+    "SOP-CRIS-02", "SOP-CRIS-03"
+]
+
 # Tier 1 AI Engine
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel('gemini-2.0-flash-exp')
@@ -77,13 +85,7 @@ def coach_interface():
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         
-        # 1. Define the module sequence
-        module_sequence = [
-            "SOP-GEAR-01", "SOP-GEAR-02", "SOP-ENV-01", 
-            "SOP-BODY-01", "SOP-NAV-01", "SOP-CRIS-01", 
-            "SOP-CRIS-02", "SOP-CRIS-03"
-        ]
-        
+               
         # 2. Calculate Progress Metrics
         try:
             current_idx = module_sequence.index(st.session_state.current_node)
