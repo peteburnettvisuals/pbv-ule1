@@ -130,26 +130,28 @@ def coach_interface():
         if lesson['video']:
             st.video(lesson['video'])
     
-    # 3. GEMINI CHAT INITIALIZATION (Using st.cache_resource to prevent rate limit errors)
+    # 3. GEMINI CHAT INITIALIZATION
+    # We only initialize if 'chat_session' DOES NOT exist
     if "chat_session" not in st.session_state:
-        # Prompt Injector
-        system_prompt = f"""
-        You are the Skyhigh AI Flight Instructor. 
-        Student: {st.session_state.full_name}. 
-        Goal: {st.session_state.user_context}. 
-        Lesson: {lesson['title']}.
-        Introduce the lesson and explain how it helps them return to 1985 safely.
-        """
-        
-        # Start the thread
+        # Start the session
         st.session_state.chat_session = model.start_chat(history=[])
         
-        # Wrapped in try/except to handle the 'ResourceExhausted' gracefully
-        try:
-            response = st.session_state.chat_session.send_message(system_prompt)
-            st.session_state.messages = [{"role": "assistant", "content": response.text}]
-        except Exception:
-            st.session_state.messages = [{"role": "assistant", "content": "I'm just recalibrating my temporal sensors. Give me a moment!"}]
+        # Only send the first message if we haven't created a greeting yet
+        if "messages" not in st.session_state or len(st.session_state.messages) == 0:
+            system_prompt = f"""
+            You are the Skyhigh AI Flight Instructor. 
+            Student: {st.session_state.full_name}. 
+            Goal: {st.session_state.user_context}. 
+            Lesson: {lesson['title']}.
+            Introduce the lesson and explain how it helps them return to 1985 safely.
+            """
+            
+            try:
+                response = st.session_state.chat_session.send_message(system_prompt)
+                st.session_state.messages = [{"role": "assistant", "content": response.text}]
+            except Exception as e:
+                # Fallback to the 'Temporal Sensor' line if rate-limited
+                st.session_state.messages = [{"role": "assistant", "content": "I'm just recalibrating my temporal sensors. Give me a moment!"}]
 
     # 4. CHAT DISPLAY & INPUT
     for msg in st.session_state.messages:
