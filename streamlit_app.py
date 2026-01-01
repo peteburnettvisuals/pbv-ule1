@@ -5,19 +5,16 @@ import json
 import xml.etree.ElementTree as ET
 import google.generativeai as genai
 
-# Use the API key from your secrets
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-
-# Specify the model at the point of interaction
-model = genai.GenerativeModel('gemini-2.0-flash-exp')
-
 # --- 1. INITIAL SETUP ---
 st.set_page_config(page_title="ULE | Skyhigh Coach", layout="wide")
 
 # Style Injector
 def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except:
+        pass # Fallback if style.css is missing
 
 local_css("style.css")
 
@@ -26,11 +23,11 @@ creds_info = st.secrets["gcp_service_account"]
 credentials = service_account.Credentials.from_service_account_info(creds_info)
 db = firestore.Client(database="ule-store1", credentials=credentials)
 
-# Configure Gemini
+# Initialize Gemini (Tier 1 / Paid Tier)
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
-# --- 2. DATA HELPER FUNCTIONS ---
+# --- 2. DATA DRIVERS ---
 
 def get_lesson_content(node_id):
     """Parses the XML syllabus to find lesson details."""
@@ -57,15 +54,7 @@ def get_current_lesson(student_email):
         return data
     return None
 
-# --- 3. STATE MANAGEMENT ---
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-if "current_node" not in st.session_state:
-    st.session_state.current_node = "EL-01.1.A"
-if "full_name" not in st.session_state:
-    st.session_state.full_name = "User Name"
-
-# --- 4. UI SCREENS ---
+# --- 3. UI SCREENS ---
 
 def welcome_screen():
     st.title("Welcome to the Universal Learning Engine")
@@ -75,7 +64,7 @@ def welcome_screen():
 
     with col_video:
         st.video("https://www.youtube.com/watch?v=your_skyhigh_welcome")
-        st.info("💡 **Tailored Learning:** Your email allows us to save your progress exactly where you left off.")
+        st.info("💡 **Tailored Learning:** Enter your email to resume your mission.")
 
     with col_auth:
         tab_login, tab_reg = st.tabs(["🔄 Resume", "🚀 New Training"])
@@ -87,13 +76,11 @@ def welcome_screen():
                     st.session_state.student_email = login_email.lower().strip()
                     st.session_state.authenticated = True
                     st.rerun()
-                else:
-                    st.warning("Please enter your email address.")
 
         with tab_reg:
             reg_name = st.text_input("Full Name")
             reg_email = st.text_input("Email Address")
-            user_context = st.text_area("Your Profile & Goals", placeholder="Tell us what you want to achieve...")
+            user_context = st.text_area("Your Profile & Goals", placeholder="e.g. Returning to 1985...")
             
             if st.button("Start New Training", use_container_width=True):
                 if reg_name and reg_email:
@@ -106,70 +93,64 @@ def welcome_screen():
                     }
                     db.collection("students").document(reg_email.lower().strip()).set(payload)
                     st.session_state.student_email = reg_email.lower().strip()
-                    st.session_state.user_context = user_context
                     st.session_state.authenticated = True
                     st.rerun()
 
 def coach_interface():
-    # 1. SIDEBAR (With your Marty McFly personalization)
+    # Fetch Content
+    lesson = get_lesson_content(st.session_state.get("current_node", "EL-01.1.A"))
+
+    # Sidebar
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
-        st.write(f"Learner: {st.session_state.full_name}") # The Marty line
+        st.write(f"Learner: {st.session_state.get('full_name', 'Explorer')}")
         st.progress(15)
-        st.write(f"**Current Element:** {st.session_state.current_node}")
+        st.write(f"**Current Element:** {st.session_state.get('current_node', 'EL-01.1.A')}")
         st.divider()
-        st.info("Instructor-Led Mode: Active")
+        if st.button("🔄 Reset Coach Session", use_container_width=True):
+            if "chat_session" in st.session_state: del st.session_state.chat_session
+            if "messages" in st.session_state: del st.session_state.messages
+            st.rerun()
 
-    # 2. XML RESOURCE LOOKUP
-    lesson = get_lesson_content(st.session_state.current_node)
+    # Main UI
     st.header("Guided Training")
-    
     with st.container(border=True):
         st.write(f"📺 **Current Lesson:** {lesson['title']}")
         if lesson['video']:
             st.video(lesson['video'])
     
-    # 3. GEMINI CHAT INITIALIZATION
-    # We only initialize if 'chat_session' DOES NOT exist
-    if "chat_session" not in st.session_state:
-        # Start the session
-        st.session_state.chat_session = model.start_chat(history=[])
-        
-        # Only send the first message if we haven't created a greeting yet
-        if "messages" not in st.session_state or len(st.session_state.messages) == 0:
-            system_prompt = f"""
-            You are the Skyhigh AI Flight Instructor. 
-            Student: {st.session_state.full_name}. 
-            Goal: {st.session_state.user_context}. 
-            Lesson: {lesson['title']}.
-            Introduce the lesson and explain how it helps them return to 1985 safely.
-            """
-            
-            try:
-                response = st.session_state.chat_session.send_message(system_prompt)
-                st.session_state.messages = [{"role": "assistant", "content": response.text}]
-            except Exception as e:
-                # Fallback to the 'Temporal Sensor' line if rate-limited
-                st.session_state.messages = [{"role": "assistant", "content": "I'm just recalibrating my temporal sensors. Give me a moment!"}]
+    # AI Chat Logic
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    # 4. CHAT DISPLAY & INPUT
+    if not st.session_state.messages:
+        try:
+            st.session_state.chat_session = model.start_chat(history=[])
+            sys_prompt = f"You are the Skyhigh Coach. Student: {st.session_state.full_name}. Goal: {st.session_state.user_context}. Lesson: {lesson['title']}. Introduce the lesson."
+            response = st.session_state.chat_session.send_message(sys_prompt)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
+        except Exception:
+            st.info("Coach is recalibrating temporal sensors. Please wait 60 seconds.")
+            return
+
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
-    if prompt := st.chat_input("Respond to the coach...", key="main_chat_input"):
+    if prompt := st.chat_input("Respond to the coach..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        
-        # Get AI Response
         try:
             response = st.session_state.chat_session.send_message(prompt)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
-            st.chat_message("assistant").write(response.text)
-        except Exception as e:
-            st.error("Engine overheating! (Rate limit hit). Please wait 60 seconds.")
+            st.rerun()
+        except Exception:
+            st.error("Engine overheating! Please wait a moment.")
 
-# --- 5. RENDER LOGIC (The Switchboard) ---
+# --- 4. RENDER SWITCHBOARD ---
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
 if not st.session_state.authenticated:
     welcome_screen()
 else:
