@@ -204,26 +204,6 @@ def coach_interface():
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
-# --- FINAL RENDER LOGIC ---
-
-# 1. If not logged in, show ONLY the welcome screen
-if not st.session_state.authenticated:
-    welcome_screen()
-
-# 2. If logged in, show ONLY the coach interface
-else:
-    # This block ensures we only fetch data once per session
-    if "user_data" not in st.session_state:
-        data = get_current_lesson(st.session_state.get('student_email')) 
-        if data:
-            st.session_state.user_data = data
-            st.session_state.current_node = data.get("current_node", "EL-01.1.A")
-            # Crucial: If we are resuming, pull the context from the DB into state
-            st.session_state.user_context = data.get("context", "your goals")
-    
-    # Render the coach interface exactly once
-    coach_interface()
-
 
 def coach_interface():
     # SIDEBAR: The Live Syllabus
@@ -258,20 +238,18 @@ def coach_interface():
         st.chat_message("user").write(prompt)
         # Here we will add the Gemini 2.0 call later!
 
-# --- RENDER LOGIC (Consolidated at the very bottom) ---
+# --- THE ONLY RENDER BLOCK (At the very bottom of the file) ---
 
-# --- RENDER LOGIC (At the bottom of your script) ---
 if not st.session_state.authenticated:
     welcome_screen()
 else:
-    # This block runs ONLY ONCE when the user first authenticates
+    # 1. Fetch data if it's the first time entering the coach mode
     if "user_data" not in st.session_state:
-        data = get_current_lesson(st.session_state.get('student_email')) 
+        data = get_current_lesson(st.session_state.student_email)
         if data:
             st.session_state.user_data = data
-            # SYNC THE STATE:
             st.session_state.current_node = data.get("current_node", "EL-01.1.A")
-            # POPULATE CONTEXT:
-            st.session_state.user_context = data.get("context", "your career goals")
+            st.session_state.user_context = data.get("context", "your goals")
     
+    # 2. RENDER THE COACH (Just once!)
     coach_interface()
