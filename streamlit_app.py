@@ -184,6 +184,11 @@ def coach_interface():
                 4. Do NOT move to the next detail until the student acknowledges or asks a follow-up.
                 5. Quiz: Only start the quiz after all technical details for this lesson have been discussed.
                 6. MANDATORY: Begin your briefing by clearly stating: "In the section, we are covering SOP {sop_number}: {lesson['title']}."
+
+                NEW QUIZ RULES:
+                - When the quiz starts, ask 3 multiple-choice questions one at a time.
+                - If the student gets at least 2 out of 3 correct, they pass.
+                - MANDATORY: When the student passes, you MUST end your final congratulatory message with the exact hidden token: QUIZ_PASSED.
                 """
                 response = st.session_state.chat_session.send_message(sys_prompt)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
