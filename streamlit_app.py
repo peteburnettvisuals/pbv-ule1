@@ -205,39 +205,6 @@ def coach_interface():
         st.chat_message("user").write(prompt)
 
 
-def coach_interface():
-    # SIDEBAR: The Live Syllabus
-    with st.sidebar:
-        st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
-        st.header("Syllabus Progress")
-        st.progress(15) # Example progress %
-        st.write(f"**Current Element:** {st.session_state.current_node}")
-        st.divider()
-        st.info("Instructor-Led Mode: Active")
-
-    # MAIN CHAT (Jump Assistant Style)
-    st.header("Guided Training")
-    
-    # Placeholder for the "Resource Slot" (Videos/Images for current node)
-    with st.container(border=True):
-        st.write("📺 **Resource for this Lesson:** Propeller Inspection Guide")
-        # st.video(...) would go here based on XML
-    
-    # Chat History Container
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": "Morning! I'm your Skyhigh Coach. Are you ready to begin Step 1: Physical Integrity?"}
-        ]
-
-    for msg in st.session_state.messages:
-        st.chat_message(msg["role"]).write(msg["content"])
-
-    # User Input (Limited by state - e.g., can't skip ahead)
-    if prompt := st.chat_input("Respond to the coach..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st.chat_message("user").write(prompt)
-        # Here we will add the Gemini 2.0 call later!
-
 # --- THE ONLY RENDER BLOCK (At the very bottom of the file) ---
 
 if not st.session_state.authenticated:
