@@ -1,0 +1,14 @@
+<syllabus>
+    <module id="MOD-01" title="Pre-Flight Essentials">
+        <element id="EL-01.1.A">
+            <title>Physical Integrity &amp; Propellers</title>
+            <video_url>https://www.youtube.com/watch?v=dQw4w9WgXcQ</video_url>
+            <description>A deep dive into checking your hardware before the jump.</description>
+        </element>
+        <element id="EL-01.1.B">
+            <title>Battery Management</title>
+            <video_url>https://www.youtube.com/watch?v=another_video</video_url>
+            <description>Ensuring your power levels are optimal for high-altitude flight.</description>
+        </element>
+    </module>
+</syllabus>

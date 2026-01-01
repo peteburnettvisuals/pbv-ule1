@@ -2,6 +2,7 @@ import streamlit as st
 from google.cloud import firestore
 from google.oauth2 import service_account
 import json
+import xml.etree.ElementTree as ET
 
 # --- INITIAL SETUP ---
 st.set_page_config(page_title="ULE | Skyhigh Coach", layout="wide")
@@ -18,6 +19,25 @@ local_css("style.css")
 creds_info = st.secrets["gcp_service_account"]
 credentials = service_account.Credentials.from_service_account_info(creds_info)
 db = firestore.Client(database="ule-store1", credentials=credentials)
+
+#Current Lession XML Lookup
+def get_lesson_content(node_id):
+    try:
+        # This reads the physical file you just showed me
+        tree = ET.parse("master_syllabus.xml")
+        root = tree.getroot()
+        
+        # Search for the element by its ID (e.g., EL-01.1.A)
+        for element in root.findall(".//element"):
+            if element.get("id") == node_id:
+                return {
+                    "title": element.find("title").text,
+                    "video": element.find("video_url").text
+                }
+    except Exception as e:
+        return {"title": "Welcome to Skyhigh", "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+    
+    return {"title": "Lesson Not Found", "video": None}
 
 #The Driver Function
 def get_current_lesson(student_email):
@@ -42,6 +62,8 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "current_node" not in st.session_state:
     st.session_state.current_node = "EL-01.1.A" # Start at first element
+
+
 
 # --- UI COMPONENTS ---
 
