@@ -114,6 +114,8 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "current_node" not in st.session_state:
     st.session_state.current_node = "EL-01.1.A" # Start at first element
+if "full_name" not in st.session_state:
+    st.session_state.full_name = "User Name" # Start at first element
 
 # --- UI COMPONENTS ---
 
