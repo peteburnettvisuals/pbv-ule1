@@ -1,3 +1,4 @@
 streamlit
 google-cloud-firestore
 google-auth
+google-generativeai

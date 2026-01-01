@@ -111,7 +111,7 @@ def welcome_screen():
                     st.rerun()
 
 def coach_interface():
-    # 1. Sidebar & XML Lookup (Keep your existing code here)
+    # --- Sidebar ---
     with st.sidebar:
         st.image("ule-skyhigh-logo1.jpg", use_container_width=True)
         st.header("Syllabus Progress")
@@ -121,6 +121,7 @@ def coach_interface():
         st.divider()
         st.info("Instructor-Led Mode: Active")
 
+    # --- XML Content Lookup ---
     lesson = get_lesson_content(st.session_state.current_node)
     st.header("Guided Training")
     
@@ -129,41 +130,29 @@ def coach_interface():
         if lesson['video']:
             st.video(lesson['video'])
     
-    # 2. INITIALIZE AI SESSION
+    # --- AI Chat Initialization ---
     if "chat_session" not in st.session_state:
-        # We prime the AI with Marty's specific goal (e.g., getting back to 1985)
-        system_instruction = f"""
-        You are the Skyhigh AI Flight Instructor. 
-        Student Name: {st.session_state.full_name}
-        Student Goal: {st.session_state.user_context}
-        Current Lesson: {lesson['title']}
+        # Construct the "Flavor" prompt
+        system_prompt = f"""You are the Skyhigh AI Flight Instructor. 
+        Student: {st.session_state.full_name}. Goal: {st.session_state.user_context}. 
+        Lesson: {lesson['title']}. Introduce the lesson and explain how it helps 
+        them with their specific goal."""
         
-        Introduce yourself and this lesson. Specifically explain how mastering 
-        '{lesson['title']}' will help them achieve their goal: '{st.session_state.user_context}'.
-        Keep it professional, encouraging, and brief.
-        """
-        
-        # Start the chat session
+        # Start session and get first message
         st.session_state.chat_session = model.start_chat(history=[])
-        
-        # Get the very first personalized message from the AI
-        response = st.session_state.chat_session.send_message(system_instruction)
+        response = st.session_state.chat_session.send_message(system_prompt)
         st.session_state.messages = [{"role": "assistant", "content": response.text}]
 
-    # 3. DISPLAY CHAT HISTORY
+    # --- Display & Input ---
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
-    # 4. HANDLE USER INPUT & AI RESPONSE
     if prompt := st.chat_input("Respond to the coach...", key="main_chat_input"):
-        # Add user message to UI
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         
-        # Send message to Gemini and get real-time response
+        # Live AI response
         response = st.session_state.chat_session.send_message(prompt)
-        
-        # Add AI message to UI
         st.session_state.messages.append({"role": "assistant", "content": response.text})
         st.chat_message("assistant").write(response.text)
 
