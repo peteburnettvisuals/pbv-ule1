@@ -227,54 +227,50 @@ def coach_interface():
 
 def display_graduation_deck():
     st.title("🎖️ SkyHigh Graduation Deck")
-    
-    # Column 1: The Certificate
-    col_cert, col_asst = st.columns([0.5, 0.5], gap="large")
-    
-    with col_cert:
-        # Use the name we captured during login
-        name = st.session_state.full_name
+
+    # 1. INITIALIZE JUMP ASSISTANT (Fixes the AttributeError)
+    if "asst_chat_session" not in st.session_state:
+        with open("master_syllabus.xml", "r") as f:
+            full_syllabus = f.read()
         
-        # Formatting the timestamp for the UI
+        st.session_state.asst_chat_session = model.start_chat(history=[])
+        asst_init_prompt = f"You are the SkyHigh Jump Assistant. Marty has graduated. Use this syllabus as your source of truth: {full_syllabus}"
+        st.session_state.asst_chat_session.send_message(asst_init_prompt)
+
+    # 2. PREPARE CERTIFICATE DATA
+    name = st.session_state.get("full_name", "Marty McFly")
     try:
         raw_date = st.session_state.user_data.get("updated_at")
-        pass_date = raw_date.strftime("%B %d, %2026")
+        pass_date = raw_date.strftime("%B %d, %Y")
     except:
         pass_date = "January 02, 2026"
 
+    # 3. RENDER TWO-COLUMN LAYOUT
+    col_cert, col_asst = st.columns([0.5, 0.5], gap="large")
+
+    with col_cert:
+        # ALL code for the certificate must be indented under this 'with'
         st.markdown(f"""
-            <div style="
-            text-align: center; 
-            padding: 50px; 
-            border: 8px double #FF4B4B; 
-            border-radius: 15px; 
-            background-color: #111; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
-            ">
-                    <div style="position: absolute; top: 10px; right: 20px; font-size: 50px; opacity: 0.3;">🏆</div>
-                    <h3 style="color: #FF4B4B; letter-spacing: 5px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
-                    <h1 style="color: white; font-size: 42px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
-                    <p style="font-size: 20px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
-                    <h2 style="color: #fff; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">
-                        {name}
-                    </h2>
-                    <p style="font-size: 20px; color: #aaa; margin-top: 20px;">
-                        has successfully completed all requirements to be recognized as a
-                    </p>
-                    <h3 style="color: #FF4B4B; font-size: 28px;">SKYHIGH QUALIFIED JUMPER</h3>
-                    <div style="margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 20px;">
-                        <div style="text-align: left;">
-                            <p style="font-size: 12px; color: #666; margin: 0;">COMPLETION DATE</p>
-                            <p style="font-size: 16px; color: #fff;">{pass_date}</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="font-size: 12px; color: #666; margin: 0;">ENGINE VERIFIED</p>
-                            <p style="font-size: 16px; color: #FF4B4B;">ULE-SKYHIGH-2.0</p>
-                        </div>
+            <div style="text-align: center; padding: 50px; border: 8px double #FF4B4B; border-radius: 15px; background-color: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
+                <div style="position: absolute; top: 10px; right: 20px; font-size: 50px; opacity: 0.3;">🏆</div>
+                <h3 style="color: #FF4B4B; letter-spacing: 5px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
+                <h1 style="color: white; font-size: 42px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
+                <p style="font-size: 20px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
+                <h2 style="color: #fff; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">{name}</h2>
+                <p style="font-size: 20px; color: #aaa; margin-top: 20px;">has successfully completed all requirements to be recognized as a</p>
+                <h3 style="color: #FF4B4B; font-size: 28px;">SKYHIGH QUALIFIED JUMPER</h3>
+                <div style="margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 20px;">
+                    <div style="text-align: left;">
+                        <p style="font-size: 12px; color: #666; margin: 0;">COMPLETION DATE</p>
+                        <p style="font-size: 16px; color: #fff;">{pass_date}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 12px; color: #666; margin: 0;">ENGINE VERIFIED</p>
+                        <p style="font-size: 16px; color: #FF4B4B;">ULE-SKYHIGH-2.0</p>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+        """, unsafe_allow_html=True)
         st.success(f"Verified Jumper: {st.session_state.student_email}")
 
     with col_asst:
@@ -283,7 +279,7 @@ def display_graduation_deck():
         
         # Assistant Chat Logic (Standard scrolling container)
         if "asst_messages" not in st.session_state:
-            st.session_state.asst_messages = [{"role": "assistant", "content": f"Ready for your jump, {name}? Ask me any SOP specifics."}]
+            st.session_state.asst_messages = [{"role": "assistant", "content": f"Ready for your jump, {name}? Ask me any questions about jump procedure or conditions and I'll answer based on the FULL specifics from the SkyHigh Standard Operating Procedure manual."}]
         
         chat_box = st.container(height=400, border=True)
         for m in st.session_state.asst_messages:
