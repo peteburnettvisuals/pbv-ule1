@@ -132,7 +132,10 @@ def coach_interface():
 
             if st.button(btn_label, type="primary", use_container_width=True):
                 if next_node == "COMPLETED":
+                    # 1. Update the record to 'GRADUATED' in the cloud
+                    update_student_node(st.session_state.student_email, "GRADUATED")
                     st.session_state.graduated = True
+                    st.rerun()
                     st.balloons()
                     st.success("Training Complete!")
                 else:
@@ -229,16 +232,46 @@ def display_graduation_deck():
         # Use the name we captured during login
         name = st.session_state.full_name
         
+        # Formatting the timestamp for the UI
+    try:
+        raw_date = st.session_state.user_data.get("updated_at")
+        pass_date = raw_date.strftime("%B %d, %2026")
+    except:
+        pass_date = "January 02, 2026"
+
         st.markdown(f"""
-        <div style="text-align: center; padding: 40px; border: 5px solid #FF4B4B; border-radius: 10px; background-color: #0E1117;">
-            <h1 style="color: #FF4B4B; margin-bottom: 0;">CERTIFICATE OF MASTERY</h1>
-            <p style="font-size: 18px; margin-top: 10px;">This is to certify that</p>
-            <h2 style="text-decoration: underline; color: white;">{name}</h2>
-            <p style="font-size: 18px;">is a certified <b>SkyHigh Qualified Jumper</b></p>
-            <hr style="border: 1px solid #333;">
-            <p style="font-size: 14px; color: #888;">Procedural Training Complete: SOP-GEAR through SOP-ENV</p>
-        </div>
-        """, unsafe_allow_html=True)
+            <div style="
+            text-align: center; 
+            padding: 50px; 
+            border: 8px double #FF4B4B; 
+            border-radius: 15px; 
+            background-color: #111; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            ">
+                    <div style="position: absolute; top: 10px; right: 20px; font-size: 50px; opacity: 0.3;">🏆</div>
+                    <h3 style="color: #FF4B4B; letter-spacing: 5px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
+                    <h1 style="color: white; font-size: 42px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
+                    <p style="font-size: 20px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
+                    <h2 style="color: #fff; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">
+                        {name}
+                    </h2>
+                    <p style="font-size: 20px; color: #aaa; margin-top: 20px;">
+                        has successfully completed all requirements to be recognized as a
+                    </p>
+                    <h3 style="color: #FF4B4B; font-size: 28px;">SKYHIGH QUALIFIED JUMPER</h3>
+                    <div style="margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 20px;">
+                        <div style="text-align: left;">
+                            <p style="font-size: 12px; color: #666; margin: 0;">COMPLETION DATE</p>
+                            <p style="font-size: 16px; color: #fff;">{pass_date}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-size: 12px; color: #666; margin: 0;">ENGINE VERIFIED</p>
+                            <p style="font-size: 16px; color: #FF4B4B;">ULE-SKYHIGH-2.0</p>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
         st.success(f"Verified Jumper: {st.session_state.student_email}")
 
     with col_asst:
@@ -255,9 +288,13 @@ def display_graduation_deck():
 
         if p := st.chat_input("Ask your jump assistant..."):
             st.session_state.asst_messages.append({"role": "user", "content": p})
-            # Start the session with full XML access here in your next step
-            st.session_state.asst_messages.append({"role": "assistant", "content": "Assistant logic engaging..."})
-            st.rerun()            
+    
+            # Send to the UNLOCKED assistant session
+            resp = st.session_state.asst_chat_session.send_message(p)
+            ai_text = resp.text
+    
+            st.session_state.asst_messages.append({"role": "assistant", "content": ai_text})
+            st.rerun() # Forces the new message to appear instantly          
             
 
 # --- 4. RENDER SWITCHBOARD ---
