@@ -132,14 +132,17 @@ def coach_interface():
 
             if st.button(btn_label, type="primary", use_container_width=True):
                 if next_node == "COMPLETED":
-                    # 1. Update the record to 'GRADUATED' in the cloud
-                    update_student_node(st.session_state.student_email, "GRADUATED")
+                    # LOCAL FIRST: Tell the UI we are done so it doesn't look back at SOPs
                     st.session_state.graduated = True
-                    st.rerun()
+                    st.session_state.current_node = "GRADUATED"
+                    
+                    # CLOUD SECOND: Update the database in the background
+                    update_student_node(st.session_state.student_email, "GRADUATED")
+                    
+                    # No rerun here! Let the balloons and success message fire, 
+                    # the next click or state change will handle the transition.
                     st.balloons()
-                    st.success("Training Complete!")
                 else:
-                    # IMPORTANT: Reset quiz state so the next module is locked
                     st.session_state.quiz_passed = False
                     update_student_node(st.session_state.student_email, next_node)
         
