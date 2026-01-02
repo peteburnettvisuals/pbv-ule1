@@ -4,6 +4,7 @@ from google.oauth2 import service_account
 import xml.etree.ElementTree as ET
 import google.generativeai as genai
 
+
 # --- 1. INITIAL SETUP ---
 st.set_page_config(page_title="ULE | Skyhigh Cockpit", layout="wide")
 
@@ -24,9 +25,9 @@ db = firestore.Client(database="ule-store1", credentials=credentials)
 # NEW: Global Syllabus Sequence
 # Moving this here ensures every column in your cockpit knows the lesson order
 module_sequence = [
-    "SOP-GEAR-01", "SOP-GEAR-02", "SOP-ENV-01", 
-    "SOP-BODY-01", "SOP-NAV-01", "SOP-CRIS-01", 
-    "SOP-CRIS-02", "SOP-CRIS-03"
+    "SOP-GEAR-01", # Canopy Systems & Ripcords
+    "SOP-GEAR-02", # Altimeter Mastery & Decision Windows
+    "SOP-ENV-01"   # Weather & Atmospheric Limits
 ]
 
 # Tier 1 AI Engine
@@ -62,7 +63,7 @@ def get_lesson_content(node_id):
     }
 
 def update_student_node(email, next_node):
-    db.collection("students").document(email).update({"current_node": next_node})
+    db.collection("students").document(email).update({"current_node": next_node,"updated_at": firestore.SERVER_TIMESTAMP})
     st.session_state.current_node = next_node
     if "chat_session" in st.session_state: del st.session_state.chat_session
     if "messages" in st.session_state: del st.session_state.messages
@@ -131,6 +132,7 @@ def coach_interface():
 
             if st.button(btn_label, type="primary", use_container_width=True):
                 if next_node == "COMPLETED":
+                    st.session_state.graduated = True
                     st.balloons()
                     st.success("Training Complete!")
                 else:
@@ -216,15 +218,59 @@ def coach_interface():
 
             st.session_state.messages.append({"role": "assistant", "content": ai_text})
             st.rerun()
+
+def display_graduation_deck():
+    st.title("🎖️ SkyHigh Graduation Deck")
+    
+    # Column 1: The Certificate
+    col_cert, col_asst = st.columns([0.5, 0.5], gap="large")
+    
+    with col_cert:
+        # Use the name we captured during login
+        name = st.session_state.full_name
+        
+        st.markdown(f"""
+        <div style="text-align: center; padding: 40px; border: 5px solid #FF4B4B; border-radius: 10px; background-color: #0E1117;">
+            <h1 style="color: #FF4B4B; margin-bottom: 0;">CERTIFICATE OF MASTERY</h1>
+            <p style="font-size: 18px; margin-top: 10px;">This is to certify that</p>
+            <h2 style="text-decoration: underline; color: white;">{name}</h2>
+            <p style="font-size: 18px;">is a certified <b>SkyHigh Qualified Jumper</b></p>
+            <hr style="border: 1px solid #333;">
+            <p style="font-size: 14px; color: #888;">Procedural Training Complete: SOP-GEAR through SOP-ENV</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.success(f"Verified Jumper: {st.session_state.student_email}")
+
+    with col_asst:
+        st.subheader("🤖 Jump Assistant (Unlocked)")
+        st.info("You are now in 'Direct Access' mode. I can answer any technical question from the full syllabus immediately.")
+        
+        # Assistant Chat Logic (Standard scrolling container)
+        if "asst_messages" not in st.session_state:
+            st.session_state.asst_messages = [{"role": "assistant", "content": f"Ready for your jump, {name}? Ask me any SOP specifics."}]
+        
+        chat_box = st.container(height=400, border=True)
+        for m in st.session_state.asst_messages:
+            chat_box.chat_message(m["role"]).write(m["content"])
+
+        if p := st.chat_input("Ask your jump assistant..."):
+            st.session_state.asst_messages.append({"role": "user", "content": p})
+            # Start the session with full XML access here in your next step
+            st.session_state.asst_messages.append({"role": "assistant", "content": "Assistant logic engaging..."})
+            st.rerun()            
             
 
 # --- 4. RENDER SWITCHBOARD ---
 if "authenticated" not in st.session_state: st.session_state.authenticated = False
 if "quiz_active" not in st.session_state: st.session_state.quiz_active = False
 if "quiz_passed" not in st.session_state: st.session_state.quiz_passed = False
+# NEW: Flag to trigger the transition to the Assistant UI
+if "graduated" not in st.session_state: st.session_state.graduated = False
+
 if not st.session_state.authenticated:
     welcome_screen()
 else:
+    # Authenticated: Ensure data is loaded
     if "user_data" not in st.session_state:
         query = db.collection("students").where("email", "==", st.session_state.student_email).limit(1).stream()
         for doc in query:
@@ -232,4 +278,9 @@ else:
             st.session_state.user_data, st.session_state.full_name = d, d.get("name", "Explorer")
             st.session_state.current_node = d.get("current_node", "SOP-GEAR-01")
             st.session_state.user_context = d.get("context", "your goals")
-    coach_interface()
+    
+    # NEW: The Switch between Training and Graduation
+    if st.session_state.graduated:
+        display_graduation_deck()
+    else:
+        coach_interface()
