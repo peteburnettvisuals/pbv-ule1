@@ -36,6 +36,28 @@ model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
 # --- 2. DATA HANDLERS ---
 
+def log_interaction(user_msg, ai_msg):
+    # Determine the context (Training Node vs Assistant)
+    is_grad = st.session_state.get("graduated", False)
+    
+    # Path logic: If graduated, store in a 'post-grad' document
+    # Otherwise, store in a document named after the SOP
+    sop_ref = "POST_GRAD_ASSISTANT" if is_grad else st.session_state.get("current_node", "GENERAL")
+    email = st.session_state.student_email
+    
+    # subcollection: students/{email}/module_logs/{sop_ref}
+    log_ref = db.collection("students").document(email).collection("module_logs").document(sop_ref)
+    
+    log_ref.set({
+        "sop_ref": sop_ref,
+        "last_updated": firestore.SERVER_TIMESTAMP,
+        "history": firestore.ArrayUnion([{
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "user": user_msg,
+            "ai": ai_msg
+        }])
+    }, merge=True)
+
 def get_lesson_content(node_id):
     try:
         # 1. Standardize the incoming ID to prevent mismatches
@@ -278,6 +300,7 @@ def coach_interface():
             # Send message to Gemini
             resp = st.session_state.chat_session.send_message(p)
             ai_text = resp.text
+            log_interaction(p, ai_text)
             
             # The 'Listener' for the secret keyword
             if "QUIZ_PASSED" in ai_text:
@@ -354,6 +377,7 @@ def display_graduation_deck():
             # Send to the UNLOCKED assistant session
             resp = st.session_state.asst_chat_session.send_message(p)
             ai_text = resp.text
+            log_interaction(p, ai_text)
     
             st.session_state.asst_messages.append({"role": "assistant", "content": ai_text})
             st.rerun() # Forces the new message to appear instantly 
