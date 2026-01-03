@@ -114,6 +114,31 @@ def reset_student_progress(email):
     
     st.rerun()
 
+def generate_mastery_report(email):
+    # 1. Gather all logs vertically
+    logs_ref = db.collection("students").document(email).collection("module_logs").stream()
+    full_transcript = ""
+    for doc in logs_ref:
+        data = doc.to_dict()
+        full_transcript += f"\n--- SOP: {data.get('sop_ref')} ---\n"
+        for entry in data.get("history", []):
+            full_transcript += f"User: {entry['user']}\nAI: {entry['ai']}\n"
+
+    # 2. One-shot Analysis (TPM efficient)
+    analysis_prompt = f"""
+    Analyze this student's training transcript:
+    {full_transcript}
+    
+    Provide a high-level 'Mastery Report':
+    1. Comment on areas they mastered exceptionally well.
+    2. Note any outstanding details they asked about or struggled with that they should keep in mind moving forward .
+    3. A final 'Instructor's Note' on their readiness, congratulating them on passing the course.
+    """
+    
+    # Use the model to generate a single summary response
+    report = model.generate_content(analysis_prompt)
+    return report.text    
+
 # --- 3. UI SCREENS ---
 
 def welcome_screen():
@@ -221,15 +246,17 @@ def coach_interface():
 
             if st.button(btn_label, type="primary", use_container_width=True):
                 if next_node == "COMPLETED":
-                    # LOCAL FIRST: Tell the UI we are done so it doesn't look back at SOPs
+                    # 1. Flip states
                     st.session_state.graduated = True
                     st.session_state.current_node = "GRADUATED"
                     
-                    # CLOUD SECOND: Update the database in the background
-                    update_student_node(st.session_state.student_email, "GRADUATED")
+                    # 2. Generate the "Chef's Kiss" Report
+                    with st.spinner("Finalizing your Mastery Report..."):
+                        report_text = generate_mastery_report(st.session_state.student_email)
+                        st.session_state.mastery_report = report_text
                     
-                    # No rerun here! Let the balloons and success message fire, 
-                    # the next click or state change will handle the transition.
+                    # 3. Update Cloud
+                    update_student_node(st.session_state.student_email, "GRADUATED")
                     st.balloons()
                 else:
                     st.session_state.quiz_passed = False
@@ -361,6 +388,10 @@ def display_graduation_deck():
             </div>
         """, unsafe_allow_html=True)
         st.success(f"Verified Jumper: {st.session_state.student_email}")
+
+        if "mastery_report" in st.session_state:
+            st.markdown("### 📝 Instructor's Mastery Report")
+            st.info(st.session_state.mastery_report)
 
     with col_asst:
         st.subheader("🤖 Jump Assistant (Unlocked)")
