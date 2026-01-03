@@ -69,6 +69,26 @@ def update_student_node(email, next_node):
     if "messages" in st.session_state: del st.session_state.messages
     st.rerun()
 
+
+def reset_student_progress(email):
+    # 1. Update the 'Cloud Truth'
+    db.collection("students").document(email).update({
+        "current_node": "SOP-GEAR-01",
+        "updated_at": firestore.SERVER_TIMESTAMP
+    })
+    # 2. Reset the 'Local Truth'
+    st.session_state.current_node = "SOP-GEAR-01"
+    st.session_state.graduated = False
+    st.session_state.quiz_passed = False
+    
+    # 3. Clean up chat history for a fresh start
+    if "messages" in st.session_state: del st.session_state.messages
+    if "chat_session" in st.session_state: del st.session_state.chat_session
+    if "asst_messages" in st.session_state: del st.session_state.asst_messages
+    if "asst_chat_session" in st.session_state: del st.session_state.asst_chat_session
+    
+    st.rerun()
+
 # --- 3. UI SCREENS ---
 
 def welcome_screen():
@@ -77,13 +97,47 @@ def welcome_screen():
     col_v, col_a = st.columns([0.6, 0.4], gap="large")
     with col_v: st.video("https://www.youtube.com/watch?v=oX3PB6_zrCU") 
     with col_a:
-        tab_l, tab_r = st.tabs(["🔄 Resume", "🚀 New Training"])
-        with tab_l:
+        tab_login, tab_reg = st.tabs(["🔄 Resume", "🚀 New Training"])
+        with tab_login:
             login_email = st.text_input("Email to Resume")
             if st.button("Resume Mission", use_container_width=True):
                 st.session_state.student_email = login_email.lower().strip()
                 st.session_state.authenticated = True
                 st.rerun()
+
+        with tab_reg:
+                    reg_name = st.text_input("Full Name")
+                    reg_email = st.text_input("Email Address (This will be your Login ID)")
+                    
+                    # THE CONTEXT FIELD
+                    user_context = st.text_area(
+                        "Your Profile & Goals", 
+                        placeholder="e.g. I am a safety officer looking to understand drone risk protocols..."
+                    )
+                    
+                    if st.button("Start New Training", use_container_width=True):
+                        if reg_name and reg_email:
+                            email_clean = reg_email.lower().strip()
+                            
+                            # LOGIC: Initialize the student document in Firestore
+                            db.collection("students").document(email_clean).set({
+                                "name": reg_name,
+                                "email": email_clean,
+                                "context": user_context,
+                                "current_node": "SOP-GEAR-01", # THE CRITICAL STARTING POINT
+                                "created_at": firestore.SERVER_TIMESTAMP,
+                                "updated_at": firestore.SERVER_TIMESTAMP
+                            })
+                            
+                            # Set local session state
+                            st.session_state.student_email = email_clean
+                            st.session_state.full_name = reg_name
+                            st.session_state.user_context = user_context
+                            st.session_state.current_node = "SOP-GEAR-01"
+                            st.session_state.authenticated = True
+                            
+                            st.success(f"Profile Created for {email_clean}!")
+                            st.rerun()               
 
 def coach_interface():
     lesson = get_lesson_content(st.session_state.current_node)
@@ -147,10 +201,8 @@ def coach_interface():
                     update_student_node(st.session_state.student_email, next_node)
         
         st.divider()
-        if st.button("🔄 Reset Chat Session", use_container_width=True):
-            if "chat_session" in st.session_state: del st.session_state.chat_session
-            if "messages" in st.session_state: del st.session_state.messages
-            st.rerun()
+        if st.button("🔄 Reset Training & Chat", use_container_width=True):
+            reset_student_progress(st.session_state.student_email)
 
     # Split Main Area into Resources and Coach
     col_res, col_coach = st.columns([0.5, 0.5], gap="medium")
@@ -314,6 +366,10 @@ else:
             st.session_state.user_data, st.session_state.full_name = d, d.get("name", "Explorer")
             st.session_state.current_node = d.get("current_node", "SOP-GEAR-01")
             st.session_state.user_context = d.get("context", "your goals")
+
+    # NEW: Check if the database says he is already a graduate
+    if st.session_state.current_node == "GRADUATED":
+    st.session_state.graduated = True
     
     # NEW: The Switch between Training and Graduation
     if st.session_state.graduated:
