@@ -1,32 +1,33 @@
 <syllabus>
     <element id="SOP-GEAR-01">
         <title>Canopy Systems &amp; Ripcords</title>
-        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY</video_url>
+        <video_url>https://www.youtube.com/watch?v=xbHLrxFouc4</video_url>
         <technical_details>
             - Dual-canopy requirement: Main and Reserve.
             - Main Ripcord: Located right side, chest height.
             - Reserve Handle: Silver Handle, Located left side, hip height.
-            - Protocol: Reserve usage only permitted after a Main Cut-away.
+            - Protocol: Reserve usage only permitted after a Main Cut-away, using the standard cutaway procedure: Look (Red Handle), Grab (Red Handle), Pull (Silver/Reserve).
         </technical_details>
     </element>
 
     <element id="SOP-GEAR-02">
         <title>Altimeter Mastery &amp; Decision Windows</title>
-        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&amp;t=53</video_url>
+        <video_url>https://www.youtube.com/watch?v=TyHABUMvngI</video_url>
         <technical_details>
+            - Set Altimeter so that zero matches dropzone elevation.
             - Check Cadence: Every 5 seconds during freefall.
-            - 5,000ft: Start of the Decision Window.
-            - 3,000ft: Absolute Mandatory Deployment Altitude.
+            - 5,000ft AGL: Start of the Decision Window.
+            - 3,000ft AGL: Absolute Mandatory Deployment Altitude.
         </technical_details>
     </element>
 
     <element id="SOP-ENV-01">
         <title>Weather &amp; Atmospheric Limits</title>
-        <video_url>https://www.youtube.com/watch?v=74DSBbwm_UY&amp;t=88</video_url>
+        <video_url>https://www.youtube.com/watch?v=sfNSY03P4QE</video_url>
         <technical_details>
-            - Visibility: No boarding if cloud cover is below 2,000ft.
+            - Visibility: No boarding if cloud cover is below 2,000ft AGL.
             - Thunderstorms: 10-mile radius clearance for Cumulonimbus formations.
-            - Wind Limit: Maximum ground speed 20 knots.
+            - Wind Limit: Maximum ground wind speed at drop zone of 20 knots.
         </technical_details>
     </element>
 

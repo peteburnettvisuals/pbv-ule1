@@ -95,7 +95,7 @@ def welcome_screen():
     st.title("Universal Learning Engine")
     st.subheader("Skyhigh Demo Edition")
     col_v, col_a = st.columns([0.6, 0.4], gap="large")
-    with col_v: st.video("https://www.youtube.com/watch?v=oX3PB6_zrCU") 
+    with col_v: st.video("https://www.youtube.com/watch?v=ryXNsPSF2T0") 
     with col_a:
         tab_login, tab_reg = st.tabs(["🔄 Resume", "🚀 New Training"])
         with tab_login:
@@ -122,7 +122,7 @@ def welcome_screen():
                     # THE CONTEXT FIELD
                     user_context = st.text_area(
                         "Your Profile & Goals", 
-                        placeholder="e.g. I am a safety officer looking to understand drone risk protocols..."
+                        placeholder="This field helps the system tailor its training even further to the user's specific goals and/or experience levels."
                     )
                     
                     if st.button("Start New Training", use_container_width=True):
@@ -224,7 +224,7 @@ def coach_interface():
             # Pulling directly from the 'lesson' dict fetched at top of function
             st.write(f"📺 **Video:** {lesson['title']}")
             st.video(lesson['video_url']) 
-            st.info("💡 Watch the video above while chatting with your coach on the right.")
+            st.info("💡 Watch the video above, and then you can chat with your AI coach about the learning content for this module.")
 
     # COLUMN 2: Independent Scrolling Coach
     with col_coach:
@@ -250,10 +250,11 @@ def coach_interface():
                 PEDAGOGICAL RULES:
                 1. Progressively teach: Deliver only ONE line item from the technical details at a time.
                 2. Contextualize: Explain how that specific detail relates to the student's goal.
-                3. Interactive Loop: After each detail, ask if it makes sense or if they have a specific question. 
+                3. Interactive Loop: After each detail, ask if it makes sense or if they have a specific question. Ecourage them to feedback what they have learned in the chat, as recapping it back to you will check understanding and also myleinate the learning by phyical action.
                 4. Do NOT move to the next detail until the student acknowledges or asks a follow-up.
                 5. Quiz: Only start the quiz after all technical details for this lesson have been discussed.
                 6. MANDATORY: Begin your briefing by clearly stating: "In the section, we are covering SOP {sop_number}: {lesson['title']}."
+                7. Be polite, and keep to the training. Steer the student back to the lesson if they go off-topic.
 
                 NEW QUIZ RULES:
                 - When the quiz starts, ask 3 multiple-choice questions one at a time.
