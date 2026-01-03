@@ -101,9 +101,19 @@ def welcome_screen():
         with tab_login:
             login_email = st.text_input("Email to Resume")
             if st.button("Resume Mission", use_container_width=True):
-                st.session_state.student_email = login_email.lower().strip()
-                st.session_state.authenticated = True
-                st.rerun()
+                email_to_check = login_email.lower().strip()
+                
+                # 1. Peek into the DB to see if they exist
+                query = db.collection("students").document(email_to_check).get()
+                
+                if query.exists:
+                    # 2. They exist! Proceed to mission
+                    st.session_state.student_email = email_to_check
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    # 3. Handling code for missing user
+                    st.error(f"User '{email_to_check}' not found. Please check your spelling or register a 'New Training' profile.")
 
         with tab_reg:
                     reg_name = st.text_input("Full Name")
