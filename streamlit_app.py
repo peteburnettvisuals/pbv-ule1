@@ -263,6 +263,8 @@ def coach_interface():
                     })    
                     
                     st.balloons()
+                    # 4. THE CRITICAL ADDITION: Force the Switchboard to re-evaluate
+                    st.rerun()
                 else:
                     st.session_state.quiz_passed = False
                     update_student_node(st.session_state.student_email, next_node)
