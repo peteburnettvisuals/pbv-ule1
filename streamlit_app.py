@@ -254,9 +254,14 @@ def coach_interface():
                     with st.spinner("Finalizing your Mastery Report..."):
                         report_text = generate_mastery_report(st.session_state.student_email)
                         st.session_state.mastery_report = report_text
+
+                    # 3. PERMANENT CLOUD WRITE: Save report to main document
+                    db.collection("students").document(st.session_state.student_email).update({
+                        "current_node": "GRADUATED",
+                        "mastery_report": report_text, # Save the generated analysis
+                        "updated_at": firestore.SERVER_TIMESTAMP
+                    })    
                     
-                    # 3. Update Cloud
-                    update_student_node(st.session_state.student_email, "GRADUATED")
                     st.balloons()
                 else:
                     st.session_state.quiz_passed = False
@@ -441,6 +446,9 @@ else:
             st.session_state.user_data, st.session_state.full_name = d, d.get("name", "Explorer")
             st.session_state.current_node = d.get("current_node", "SOP-GEAR-01")
             st.session_state.user_context = d.get("context", "your goals")
+
+            # NEW: Restore the report from the Cloud Truth
+            st.session_state.mastery_report = d.get("mastery_report", "No report on file.")
 
     # NEW: Check if the database says he is already a graduate
     if st.session_state.current_node == "GRADUATED":
