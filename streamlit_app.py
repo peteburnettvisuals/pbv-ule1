@@ -3,6 +3,7 @@ from google.cloud import firestore
 from google.oauth2 import service_account
 import xml.etree.ElementTree as ET
 import google.generativeai as genai
+import datetime 
 
 
 # --- 1. INITIAL SETUP ---
@@ -37,24 +38,23 @@ model = genai.GenerativeModel('gemini-2.0-flash-exp')
 # --- 2. DATA HANDLERS ---
 
 def log_interaction(user_msg, ai_msg):
-    # Safety Check: Ensure we have a valid email before trying to write to DB
     email = st.session_state.get("student_email")
     if not email:
-        return # Skip logging if no email is found to prevent the TypeError
+        return
 
     is_grad = st.session_state.get("graduated", False)
     sop_ref = "POST_GRAD_ASSISTANT" if is_grad else st.session_state.get("current_node", "GENERAL")
     
-    # Path: students / {email} / module_logs / {sop_ref}
     log_ref = db.collection("students").document(email).collection("module_logs").document(sop_ref)
     
-    # Ensure message content is treated as a string to avoid TypeErrors
+    # Use Python's datetime for the nested array element
+    # Use firestore.SERVER_TIMESTAMP only for the top-level field
     log_ref.set({
         "sop_ref": str(sop_ref),
-        "last_updated": firestore.SERVER_TIMESTAMP,
+        "last_updated": firestore.SERVER_TIMESTAMP, 
         "history": firestore.ArrayUnion([
             {
-                "timestamp": firestore.SERVER_TIMESTAMP,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc), # FIX HERE
                 "user": str(user_msg),
                 "ai": str(ai_msg)
             }
