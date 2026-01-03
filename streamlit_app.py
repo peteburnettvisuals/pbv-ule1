@@ -37,25 +37,28 @@ model = genai.GenerativeModel('gemini-2.0-flash-exp')
 # --- 2. DATA HANDLERS ---
 
 def log_interaction(user_msg, ai_msg):
-    # Determine the context (Training Node vs Assistant)
+    # Safety Check: Ensure we have a valid email before trying to write to DB
+    email = st.session_state.get("student_email")
+    if not email:
+        return # Skip logging if no email is found to prevent the TypeError
+
     is_grad = st.session_state.get("graduated", False)
-    
-    # Path logic: If graduated, store in a 'post-grad' document
-    # Otherwise, store in a document named after the SOP
     sop_ref = "POST_GRAD_ASSISTANT" if is_grad else st.session_state.get("current_node", "GENERAL")
-    email = st.session_state.student_email
     
-    # subcollection: students/{email}/module_logs/{sop_ref}
+    # Path: students / {email} / module_logs / {sop_ref}
     log_ref = db.collection("students").document(email).collection("module_logs").document(sop_ref)
     
+    # Ensure message content is treated as a string to avoid TypeErrors
     log_ref.set({
-        "sop_ref": sop_ref,
+        "sop_ref": str(sop_ref),
         "last_updated": firestore.SERVER_TIMESTAMP,
-        "history": firestore.ArrayUnion([{
-            "timestamp": firestore.SERVER_TIMESTAMP,
-            "user": user_msg,
-            "ai": ai_msg
-        }])
+        "history": firestore.ArrayUnion([
+            {
+                "timestamp": firestore.SERVER_TIMESTAMP,
+                "user": str(user_msg),
+                "ai": str(ai_msg)
+            }
+        ])
     }, merge=True)
 
 def get_lesson_content(node_id):
