@@ -345,7 +345,13 @@ def display_graduation_deck():
             ai_text = resp.text
     
             st.session_state.asst_messages.append({"role": "assistant", "content": ai_text})
-            st.rerun() # Forces the new message to appear instantly          
+            st.rerun() # Forces the new message to appear instantly 
+
+    st.divider()
+    col_spacer, col_reset = st.columns([0.7, 0.3])
+    with col_reset:
+        if st.button("🔄 Reset & Recertify", use_container_width=True, help="This will wipe your progress and start training from SOP-GEAR-01"):
+            reset_student_progress(st.session_state.student_email)         
             
 
 # --- 4. RENDER SWITCHBOARD ---
@@ -369,7 +375,7 @@ else:
 
     # NEW: Check if the database says he is already a graduate
     if st.session_state.current_node == "GRADUATED":
-    st.session_state.graduated = True
+        st.session_state.graduated = True
     
     # NEW: The Switch between Training and Graduation
     if st.session_state.graduated:
