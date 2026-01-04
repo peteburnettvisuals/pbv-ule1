@@ -147,7 +147,7 @@ def welcome_screen():
     col_v, col_a = st.columns([0.6, 0.4], gap="large")
     with col_v: st.video("https://www.youtube.com/watch?v=ryXNsPSF2T0") 
     with col_a:
-        tab_login, tab_reg = st.tabs(["🔄 Resume", "🚀 New Training"])
+        tab_reg, tab_login = st.tabs(["🚀 Start Here", "🔄 Login & Resume"])
         with tab_login:
             login_email = st.text_input("Email to Resume")
             if st.button("Resume Mission", use_container_width=True):
@@ -288,6 +288,8 @@ def coach_interface():
     # COLUMN 2: Independent Scrolling Coach
     with col_coach:
         st.subheader("🤖 AI Instructor")
+        # Mobile Hint
+        st.caption("👈 Mobile users: Tap the 2 arrows top-left (>>) to view the sidebar, which shows your progress & allows your to move to the next module.")
         
         # 1. Create the scrolling container
         chat_history = st.container(height=500, border=True)
@@ -376,11 +378,11 @@ def display_graduation_deck():
         st.markdown(f"""
             <div style="text-align: center; padding: 50px; border: 8px double #FF4B4B; border-radius: 15px; background-color: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
                 <div style="position: absolute; top: 10px; right: 20px; font-size: 50px; opacity: 0.3;">🏆</div>
-                <h3 style="color: #FF4B4B; letter-spacing: 5px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
-                <h1 style="color: white; font-size: 42px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
-                <p style="font-size: 20px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
+                <h3 style="color: #FF4B4B; letter-spacing: 2px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
+                <h1 style="color: white; font-size: 32px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
+                <p style="font-size: 18px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
                 <h2 style="color: #fff; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">{name}</h2>
-                <p style="font-size: 20px; color: #aaa; margin-top: 20px;">has successfully completed all requirements to be recognized as a</p>
+                <p style="font-size: 18px; color: #aaa; margin-top: 20px;">has successfully completed all requirements to be recognized as a</p>
                 <h3 style="color: #FF4B4B; font-size: 28px;">SKYHIGH QUALIFIED JUMPER</h3>
                 <div style="margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 20px;">
                     <div style="text-align: left;">
