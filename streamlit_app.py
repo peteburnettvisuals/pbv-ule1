@@ -376,18 +376,18 @@ def display_graduation_deck():
     with col_cert:
         # ALL code for the certificate must be indented under this 'with'
         st.markdown(f"""
-            <div style="text-align: center; padding: 50px; border: 8px double #FF4B4B; border-radius: 15px; background-color: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
+            <div style="text-align: center; padding: 50px; border: 8px double #FF4B4B; border-radius: 15px; background-color: #f9f9f9; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;">
                 <div style="position: absolute; top: 10px; right: 20px; font-size: 50px; opacity: 0.3;">🏆</div>
                 <h3 style="color: #FF4B4B; letter-spacing: 2px; margin-bottom: 0;">OFFICIAL CERTIFICATION</h3>
-                <h1 style="color: white; font-size: 32px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
-                <p style="font-size: 18px; color: #aaa; margin: 20px 0;">This document serves to confirm that</p>
-                <h2 style="color: #fff; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">{name}</h2>
-                <p style="font-size: 18px; color: #aaa; margin-top: 20px;">has successfully completed all requirements to be recognized as a</p>
+                <h1 style="color: #31333f; font-size: 32px; margin-top: 10px; font-family: 'serif';">Certificate of Mastery</h1>
+                <p style="font-size: 18px; color: #555; margin: 20px 0;">This document serves to confirm that</p>
+                <h2 style="color: ##31333f; font-size: 36px; border-bottom: 2px solid #FF4B4B; display: inline-block; padding-bottom: 5px;">{name}</h2>
+                <p style="font-size: 18px; color: #555; margin-top: 20px;">has successfully completed all requirements to be recognized as a</p>
                 <h3 style="color: #FF4B4B; font-size: 28px;">SKYHIGH QUALIFIED JUMPER</h3>
                 <div style="margin-top: 40px; display: flex; justify-content: space-around; border-top: 1px solid #333; padding-top: 20px;">
                     <div style="text-align: left;">
                         <p style="font-size: 12px; color: #666; margin: 0;">COMPLETION DATE</p>
-                        <p style="font-size: 16px; color: #fff;">{pass_date}</p>
+                        <p style="font-size: 16px; color: #31333f;">{pass_date}</p>
                     </div>
                     <div style="text-align: right;">
                         <p style="font-size: 12px; color: #666; margin: 0;">ENGINE VERIFIED</p>

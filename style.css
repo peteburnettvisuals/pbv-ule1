@@ -6,7 +6,7 @@
 
 /* 2. Sidebar: Keeping it dark for high-contrast "Command Center" feel */
 [data-testid="stSidebar"] {
-    background-color: #F3F4F6);
+    background-color: #F3F4F6;
     color: rgb(20, 20, 20);
 }
 
@@ -16,6 +16,12 @@
     color: #1E293B !important;
     border: 1px solid #D1D5DB !important;
     border-radius: 8px;
+}
+
+/* Ensure the text being typed is ALWAYS dark */
+.stChatInput textarea {
+    color: #1E293B !important;
+    background-color: #FFFFFF !important;
 }
 
 /* 4. Chat Bubbles: "Jump Assistant" Style */
