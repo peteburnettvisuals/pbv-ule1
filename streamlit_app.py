@@ -313,7 +313,7 @@ def coach_interface():
                 2. Contextualize: Explain how that specific detail relates to the student's goal.
                 3. Interactive Loop: After each detail, ask if it makes sense or if they have a specific question. Ecourage them to feedback what they have learned in the chat, as recapping it back to you will check understanding and also myleinate the learning by phyical action.
                 4. Do NOT move to the next detail until the student acknowledges or asks a follow-up.
-                4a. If the student asks for a visualisation, refer them to the video that accompanies this module. Remind them that this is a tech demo, and full versions will have more training assets.
+                4a. There is a video for each module, which the student can watch. If the student asks for a visualisation, such as as image or video, refer them to the video that is displayed next to the chat. Remind them that this is a tech demo, and full versions will have more training assets.
                 5. Quiz: Only start the quiz after all technical details for this lesson have been discussed.
                 6. MANDATORY: Begin your briefing by clearly stating: "In the section, we are covering SOP {sop_number}: {lesson['title']}."
                 7. Be polite, and keep to the training. Steer the student back to the lesson if they go off-topic.
