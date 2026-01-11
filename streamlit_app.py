@@ -33,7 +33,7 @@ module_sequence = [
 
 # Tier 1 AI Engine
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel('gemini-2.0-flash-exp')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 # --- 2. DATA HANDLERS ---
 
